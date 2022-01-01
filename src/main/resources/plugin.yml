@@ -1,6 +1,6 @@
-name: ${pluginName}
-version: ${version}
-main: ${group}.${packageName}.plugin.${pluginName}Plugin
+name: LifeSteal
+version: 0.0.4
+main: io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin
 api-version: 1.18
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.6.0
