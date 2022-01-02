@@ -1,27 +1,37 @@
 package io.github.superjoy0502.lifesteal.listener
 
-import org.bukkit.Bukkit
+import io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin
+import org.bukkit.GameMode
 import org.bukkit.attribute.Attribute
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 
-class PlayerListener : Listener {
+class PlayerListener(val plugin: LifeStealPlugin) : Listener {
 
     @EventHandler
     fun playerKilledEvent(event: PlayerDeathEvent) {
 
+        if (!plugin.started) return
+
         val victim = event.player
         val killer = victim.killer ?: return
-
         if (victim == killer) return
 
-        victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =
-            victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue?.minus(2)!!
-        killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =
-            killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue?.plus(2)!!
+        val victimMaxHealth = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)
 
-//        Bukkit.getServer().logger.info("${killer.name} killed ${victim.name}.")
+        if (victimMaxHealth?.baseValue == 2.0) {
+
+            victim.gameMode = GameMode.SPECTATOR
+            return
+
+        }
+
+        val killerMaxHealth = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)
+
+        victimMaxHealth?.baseValue = victimMaxHealth?.baseValue?.minus(2)!!
+        killerMaxHealth?.baseValue = killerMaxHealth?.baseValue?.plus(2)!!
+
 
     }
 
