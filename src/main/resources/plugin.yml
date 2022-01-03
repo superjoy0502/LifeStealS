@@ -3,20 +3,6 @@ version: ${project.version}
 author: Dongwoo Kim
 main: io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin
 api-version: 1.18
-commands:
-  lifesteal:
-    description: LifeSteal 플러그인 명령어
-    usage: /lifesteal [argument]
-    permission: lifesteal.commands
-    permission-message: 이 커맨드는 lifesteal.commands 권한을 필요로 합니다
-permissions:
-  lifesteal.*:
-    description: LifeSteal 플러그인에 관한 모든 권한을 부여합니다
-    children:
-      lifesteal.commands: true
-  lifesteal.commands:
-    description: LifeSteal 플러그인 명령어를 사용할 수 있는 권한을 부여합니다
-    default: op
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.6.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.0
