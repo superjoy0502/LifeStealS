@@ -3,11 +3,12 @@ package io.github.superjoy0502.lifesteal.listener
 import io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin
 import org.bukkit.GameMode
 import org.bukkit.attribute.Attribute
+import org.bukkit.entity.Mob
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import kotlin.math.floor
 
 class PlayerListener(val plugin: LifeStealPlugin) : Listener {
 
@@ -17,28 +18,55 @@ class PlayerListener(val plugin: LifeStealPlugin) : Listener {
         if (!plugin.started) return // 게임 시작했는지 확인
 
         val victim = event.player
-        val killer = victim.killer ?: return // 플레이어가 죽인건지 확인
-        if (victim == killer) return // 자살인지 확인
+        val killer = victim.killer
+        val deathReason = victim.lastDamageCause
+        if (killer == null) {
 
-        if (victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue == 2.0) { // 더 이상 깎을 체력이 없을 때
+            if (deathReason is EntityDamageByEntityEvent) {
 
-            victim.gameMode = GameMode.SPECTATOR
-            plugin.survivorList.remove(victim)
+                if (deathReason.damager is Mob) { // 몬스터에 의해 사망한 경우
 
-            if (plugin.survivorList.size == 1) {
+                    victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue?.minus(plugin.lifeStealValue)
+                    return
 
-                plugin.endGame()
+                }
 
             }
 
-            return
+        }
+        else { // 플레이어에 의해 사망한 경우
+
+            if (victim != killer) {
+
+                val victimMaxHealth = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: return
+                val killerMaxHealth = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: return
+                if (victimMaxHealth <= plugin.lifeStealValue) { // 더 이상 깎을 체력이 없을 때
+
+                    victim.gameMode = GameMode.SPECTATOR
+                    plugin.survivorList.remove(victim)
+
+                    if (plugin.survivorList.size == 1) {
+
+                        plugin.endGame(killer)
+
+                    }
+
+                    return
+
+                }
+
+                victimMaxHealth.minus(plugin.lifeStealValue)
+                killerMaxHealth.plus(plugin.lifeStealValue)
+
+                return
+
+            }
 
         }
-
+        // 기타
+        val value = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue
         victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =
-            victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue?.minus(2)!!
-        killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =
-            killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue?.plus(2)!!
+            floor(value / 2)
 
     }
 
