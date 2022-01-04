@@ -246,6 +246,16 @@ class LifeStealPlugin : JavaPlugin() {
 
     fun applyPenaltyToPlayers() {
 
+        when (phase) {
+
+            1, 2 -> {
+
+                return
+
+            }
+
+        }
+
         penaltyId = Random().nextInt(0, 5)
 
         when (penaltyId) {
