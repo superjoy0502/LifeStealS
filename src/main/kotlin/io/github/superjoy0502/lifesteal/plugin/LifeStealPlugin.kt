@@ -39,7 +39,10 @@ class LifeStealPlugin : JavaPlugin() {
     var centreLocation: Location? = null
     var phase = 0
     lateinit var phaseScope: CoroutineScope
-    lateinit var worldBorderScope: CoroutineScope
+//    lateinit var worldBorderScope: CoroutineScope
+    lateinit var fixTimeScope: CoroutineScope
+    lateinit var fixDifficultyScope: CoroutineScope
+    lateinit var fixWeatherScope: CoroutineScope
     var phaseLength = 300
     var currentPhaseLength = phaseLength
     var phaseColor = BarColor.RED
@@ -162,6 +165,12 @@ class LifeStealPlugin : JavaPlugin() {
 
     private fun start() {
 
+        for (world in server.worlds) {
+
+            world.difficulty = Difficulty.EASY
+
+        }
+
         centreLocation!!.world.worldBorder.size = 10000.0
         centreLocation!!.world.worldBorder.center = centreLocation!!
 
@@ -197,9 +206,9 @@ class LifeStealPlugin : JavaPlugin() {
         val barColorList = listOf(BarColor.RED, BarColor.GREEN, BarColor.BLUE, BarColor.PURPLE, BarColor.PINK, BarColor.WHITE, BarColor.YELLOW)
         phaseColor = barColorList[Random().nextInt(0, 8)]
         bossBar.color = phaseColor
-        applyPenaltyToPlayers()
         phaseScope.launch {
 
+            applyPenaltyToPlayers()
             val suspension = Suspension()
             currentPhaseLength = phaseLength
             repeat(phaseLength) {
@@ -254,73 +263,146 @@ class LifeStealPlugin : JavaPlugin() {
 
             }
 
+            3, 4, 5, 6 -> {
+
+                penaltyId = Random().nextInt(0, 5)
+
+                when (penaltyId) {
+
+                    0 -> { // 빼앗기는 하트 수 1개 증가
+
+                        penaltyString = "${ChatColor.RED}하트${ChatColor.RESET}가 한개 더 빼앗깁니다"
+
+                        lifeStealValue += 2
+
+                    }
+
+                    1 -> { // 5분동안 모든 플레이어 발광 효과 부여
+
+                        for (player in survivorList) {
+
+                            player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, phaseLength, 1))
+
+                        }
+
+                    }
+
+                    2 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소
+
+                        penaltyString = "${ChatColor.RED}하트${ChatColor.RESET} 1개가 영구적으로 감소합니다"
+
+                        for (player in survivorList) {
+
+                            player.removeHeart(1)
+
+                        }
+
+                        /*penaltyString = "${ChatColor.AQUA}월드보더${ChatColor.RESET}가 줄어듭니다"
+
+                        worldBorderScope = HeartbeatScope()
+                        val suspension = Suspension()
+                        worldBorderScope.launch {
+
+                            repeat(phaseLength * 1000) {
+
+                                centreLocation!!.world.worldBorder.size.minus(1000 / (phaseLength * 1000))
+                                suspension.delay(1L)
+
+                            }
+
+                        }*/
+
+                    }
+
+                    3 -> { // 5분동안 밤 12시, 난이도 보통 유지
+
+                        fixTimeScope = HeartbeatScope()
+                        fixTimeScope.launch {
+
+                            val suspension = Suspension()
+                            for (world in server.worlds) {
+
+                                world.time = 18000L
+                                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false)
+
+                            }
+                            suspension.delay(300000L)
+                            for (world in server.worlds) {
+
+                                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true)
+
+                            }
+
+                        }
+                        fixDifficultyScope = HeartbeatScope()
+                        fixDifficultyScope.launch {
+
+                            val suspension = Suspension()
+                            for (world in server.worlds) {
+
+                                world.difficulty = Difficulty.NORMAL
+
+                            }
+                            suspension.delay(300000L)
+                            for (world in server.worlds) {
+
+                                world.difficulty = Difficulty.EASY
+
+                            }
+
+                        }
+
+                    }
+
+                    4 -> { // 5분동안 날씨 번개 유지
+
+                        fixWeatherScope = HeartbeatScope()
+                        fixWeatherScope.launch {
+
+                            val suspension = Suspension()
+                            repeat(30) {
+
+                                for (world in server.worlds) {
+
+                                    world.setStorm(true)
+                                    world.isThundering = true
+
+                                }
+
+                                suspension.delay(10000L)
+
+                            }
+                            for (world in server.worlds) {
+
+                                world.setStorm(false)
+                                world.isThundering = false
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
         }
 
-        penaltyId = Random().nextInt(0, 5)
+    }
 
-        when (penaltyId) {
+    fun Player.removeHeart(hearts: Int) {
 
-            0 -> { // 하트 1개 영구적 감소
+        if (this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= (hearts * 2.0)) {
 
-                penaltyString = "${ChatColor.RED}하트${ChatColor.RESET} 1개가 영구적으로 감소합니다"
+            this.gameMode = GameMode.SPECTATOR
+            survivorList.remove(player)
+            this.showTitle(Title.title(Component.text("${ChatColor.RED}탈락하셨습니다"), Component.empty()))
 
-                for (player in survivorList) {
+        }
+        else {
 
-                    if (player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= 2) {
-
-                        player.gameMode = GameMode.SPECTATOR
-                        survivorList.remove(player)
-                        player.showTitle(Title.title(Component.text("${ChatColor.RED}탈락하셨습니다"), Component.empty()))
-
-                    }
-                    else {
-
-                        player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!!.minus(2)
-
-                    }
-
-                }
-
-            }
-
-            1 -> {
-
-                penaltyString = "${ChatColor.RED}하트${ChatColor.RESET}가 2개 빼앗겨집니다"
-
-                lifeStealValue = 4
-
-            }
-
-            2 -> {
-
-                penaltyString = "${ChatColor.AQUA}월드보더${ChatColor.RESET}가 줄어듭니다"
-
-                worldBorderScope = HeartbeatScope()
-                val suspension = Suspension()
-                worldBorderScope.launch {
-
-                    repeat(phaseLength * 1000) {
-
-                        centreLocation!!.world.worldBorder.size.minus(1000 / (phaseLength * 1000))
-                        suspension.delay(1L)
-
-                    }
-
-                }
-
-            }
-
-            3 -> {
-
-                penaltyString = "${ChatColor.RED}저주에 걸립니다"
-
-                for (player in survivorList) {
-
-                    player.addPotionEffect(PotionEffect(PotionEffectType.POISON, 300, 1))
-
-                }
-
-            }
+            this.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue =- (hearts * 2.0)
 
         }
 
