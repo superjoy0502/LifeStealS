@@ -1,9 +1,13 @@
 package io.github.superjoy0502.lifesteal.listener
 
 import io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.title.Title
+import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Mob
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -26,7 +30,7 @@ class PlayerListener(val plugin: LifeStealPlugin) : Listener {
 
                 if (deathReason.damager is Mob) { // 몬스터에 의해 사망한 경우
 
-                    victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue?.minus(plugin.lifeStealValue)
+                    victim.removeHeart(plugin.lifeStealValue / 2)
                     return
 
                 }
@@ -38,25 +42,8 @@ class PlayerListener(val plugin: LifeStealPlugin) : Listener {
 
             if (victim != killer) {
 
-                val victimMaxHealth = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: return
-                val killerMaxHealth = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: return
-                if (victimMaxHealth <= plugin.lifeStealValue) { // 더 이상 깎을 체력이 없을 때
-
-                    victim.gameMode = GameMode.SPECTATOR
-                    plugin.survivorList.remove(victim)
-
-                    if (plugin.survivorList.size == 1) {
-
-                        plugin.endGame(killer)
-
-                    }
-
-                    return
-
-                }
-
-                victimMaxHealth.minus(plugin.lifeStealValue)
-                killerMaxHealth.plus(plugin.lifeStealValue)
+                victim.removeHeart(plugin.lifeStealValue / 2)
+                killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue += plugin.lifeStealValue
 
                 return
 
@@ -65,25 +52,35 @@ class PlayerListener(val plugin: LifeStealPlugin) : Listener {
         }
         // 기타
         val value = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue
-        victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =
-            floor(value / 2)
+        if (value == 1.0) {
+
+            plugin.survivorList.remove(victim)
+
+        }
+        else {
+
+            victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue =
+                floor(victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue / 2)
+
+        }
 
     }
 
-    /*@EventHandler
-    fun playerDisconnectEvent(event: PlayerQuitEvent) {
+    private fun Player.removeHeart(hearts: Int) {
 
-        if (!plugin.participantList.contains(event.player)) return
+        if (this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= (hearts * 2.0)) {
 
-        event.player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = 20.0
+            this.gameMode = GameMode.SPECTATOR
+            plugin.survivorList.remove(player)
+            this.showTitle(Title.title(Component.text("${ChatColor.RED}탈락하셨습니다"), Component.empty()))
+
+        }
+        else {
+
+            this.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue =- (hearts * 2.0)
+
+        }
 
     }
-
-    @EventHandler
-    fun playerJoinEvent(event: PlayerJoinEvent) {
-
-
-
-    }*/
 
 }

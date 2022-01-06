@@ -50,6 +50,7 @@ class LifeStealPlugin : JavaPlugin() {
     var penaltyString = ""
     var lifeStealValue = 2
     var penaltyId = -1
+    var hardCorePenaltyId = -1
 
     override fun onEnable() {
 
@@ -227,7 +228,7 @@ class LifeStealPlugin : JavaPlugin() {
 
     fun reset() {
 
-
+        // TODO
 
     }
 
@@ -253,135 +254,109 @@ class LifeStealPlugin : JavaPlugin() {
 
     }
 
-    fun applyPenaltyToPlayers() {
+    private fun applyPenaltyToPlayers() {
 
-        when (phase) {
+        if (phase == 1 || phase == 2) return // phase 1, 2
+        else if (phase in 3..6) { // phase 3 ~ 6
 
-            1, 2 -> {
+            penaltyId = Random().nextInt(0, 5)
 
-                return
+            when (penaltyId) {
+
+                0 -> { // 빼앗기는 하트 수 1개 증가
+
+                    penaltyString = "${ChatColor.RED}하트${ChatColor.RESET}가 한개 더 빼앗깁니다"
+
+                    lifeStealValue += 2
+
+                }
+
+                1 -> { // 5분동안 모든 플레이어 발광 효과 부여
+
+                    for (player in survivorList) {
+
+                        player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, phaseLength, 1))
+
+                    }
+
+                }
+
+                2 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소
+
+                    penaltyString = "${ChatColor.RED}하트${ChatColor.RESET} 1개가 영구적으로 감소합니다"
+
+                    for (player in survivorList) {
+
+                        player.removeHeart(1)
+
+                    }
+
+                }
+
+                3 -> { // 5분동안 밤 12시, 난이도 보통 유지
+
+                    fixTime()
+                    fixDifficulty(Difficulty.NORMAL)
+
+                }
+
+                4 -> { // 5분동안 날씨 번개 유지
+
+                    fixThunderStorm()
+
+                }
 
             }
 
-            3, 4, 5, 6 -> {
+        }
+        else if (phase in 7..16) { // phase 7 ~ 16
 
-                penaltyId = Random().nextInt(0, 5)
+            val decider = Random().nextInt(1, 101)
 
-                when (penaltyId) {
+            if (decider <= 20) {
 
-                    0 -> { // 빼앗기는 하트 수 1개 증가
+                if (lifeStealValue <= 10) { // 빼앗기는 하트 수 1개 영구적 증가 (최대 5개까지) - 20%
 
-                        penaltyString = "${ChatColor.RED}하트${ChatColor.RESET}가 한개 더 빼앗깁니다"
+                    lifeStealValue += 2
 
-                        lifeStealValue += 2
+                }
+                else { // 빼앗기는 하트 수 5개 초과 시
+
+                    if (Random().nextInt(0, 2) == 0) { // 5분동안 밤 12시, 난이도 어려움 고정 - +10%
+
+                        fixTime()
+                        fixDifficulty(Difficulty.HARD)
+
+                    }
+                    else { // 5분동안 날씨 번개 유지, 난이도 어려움 고정 - +10%
+
+                        fixThunderStorm()
+                        fixDifficulty(Difficulty.HARD)
 
                     }
 
-                    1 -> { // 5분동안 모든 플레이어 발광 효과 부여
+                }
 
-                        for (player in survivorList) {
+            }
+            else if (decider in 21..30) { // 가장 가까운 플레이어에게 위치를 가르키는 나침반 지급 - 10%
 
-                            player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, phaseLength, 1))
+                // TODO
 
-                        }
+            }
+            else if (decider in 31..35) { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소 - 5%
 
-                    }
+                for (player in survivorList) {
 
-                    2 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소
+                    player.removeHeart(1)
 
-                        penaltyString = "${ChatColor.RED}하트${ChatColor.RESET} 1개가 영구적으로 감소합니다"
+                }
 
-                        for (player in survivorList) {
+            }
+            else if (decider in 36..50) { // 모든 플레이어에게 발광 효과 부여 - 15%
 
-                            player.removeHeart(1)
+                for (player in survivorList) {
 
-                        }
-
-                        /*penaltyString = "${ChatColor.AQUA}월드보더${ChatColor.RESET}가 줄어듭니다"
-
-                        worldBorderScope = HeartbeatScope()
-                        val suspension = Suspension()
-                        worldBorderScope.launch {
-
-                            repeat(phaseLength * 1000) {
-
-                                centreLocation!!.world.worldBorder.size.minus(1000 / (phaseLength * 1000))
-                                suspension.delay(1L)
-
-                            }
-
-                        }*/
-
-                    }
-
-                    3 -> { // 5분동안 밤 12시, 난이도 보통 유지
-
-                        fixTimeScope = HeartbeatScope()
-                        fixTimeScope.launch {
-
-                            val suspension = Suspension()
-                            for (world in server.worlds) {
-
-                                world.time = 18000L
-                                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false)
-
-                            }
-                            suspension.delay(300000L)
-                            for (world in server.worlds) {
-
-                                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true)
-
-                            }
-
-                        }
-                        fixDifficultyScope = HeartbeatScope()
-                        fixDifficultyScope.launch {
-
-                            val suspension = Suspension()
-                            for (world in server.worlds) {
-
-                                world.difficulty = Difficulty.NORMAL
-
-                            }
-                            suspension.delay(300000L)
-                            for (world in server.worlds) {
-
-                                world.difficulty = Difficulty.EASY
-
-                            }
-
-                        }
-
-                    }
-
-                    4 -> { // 5분동안 날씨 번개 유지
-
-                        fixWeatherScope = HeartbeatScope()
-                        fixWeatherScope.launch {
-
-                            val suspension = Suspension()
-                            repeat(30) {
-
-                                for (world in server.worlds) {
-
-                                    world.setStorm(true)
-                                    world.isThundering = true
-
-                                }
-
-                                suspension.delay(10000L)
-
-                            }
-                            for (world in server.worlds) {
-
-                                world.setStorm(false)
-                                world.isThundering = false
-
-                            }
-
-                        }
-
-                    }
+                    player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, phaseLength, 1))
 
                 }
 
@@ -391,7 +366,79 @@ class LifeStealPlugin : JavaPlugin() {
 
     }
 
-    fun Player.removeHeart(hearts: Int) {
+    private fun fixThunderStorm() {
+        fixWeatherScope = HeartbeatScope()
+        fixWeatherScope.launch {
+
+            val suspension = Suspension()
+            repeat(30) {
+
+                for (world in server.worlds) {
+
+                    world.setStorm(true)
+                    world.isThundering = true
+
+                }
+
+                suspension.delay(10000L)
+
+            }
+            for (world in server.worlds) {
+
+                world.setStorm(false)
+                world.isThundering = false
+
+            }
+
+        }
+    }
+
+    private fun fixTime() {
+
+        fixTimeScope = HeartbeatScope()
+        fixTimeScope.launch {
+
+            val suspension = Suspension()
+            for (world in server.worlds) {
+
+                world.time = 18000L
+                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false)
+
+            }
+            suspension.delay(300000L)
+            for (world in server.worlds) {
+
+                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true)
+
+            }
+
+        }
+
+    }
+
+    private fun fixDifficulty(difficulty: Difficulty) {
+
+        fixDifficultyScope = HeartbeatScope()
+        fixDifficultyScope.launch {
+
+            val suspension = Suspension()
+            for (world in server.worlds) {
+
+                world.difficulty = difficulty
+
+            }
+            suspension.delay(300000L)
+            for (world in server.worlds) {
+
+                world.difficulty = Difficulty.EASY
+
+            }
+
+        }
+
+    }
+
+    private fun Player.removeHeart(hearts: Int) {
 
         if (this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= (hearts * 2.0)) {
 
@@ -408,7 +455,7 @@ class LifeStealPlugin : JavaPlugin() {
 
     }
 
-    fun convertSecondsToMinutesAndSeconds(seconds: Int): List<Int> {
+    private fun convertSecondsToMinutesAndSeconds(seconds: Int): List<Int> {
 
         val minutes = seconds / 60
         val seconds = seconds % 60
