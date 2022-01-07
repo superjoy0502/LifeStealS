@@ -1,10 +1,10 @@
-package io.github.superjoy0502.lifesteal.plugin
+package io.github.superjoy0502.lifesteals.plugin
 
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.heartbeat.coroutines.Suspension
 import io.github.monun.kommand.kommand
-import io.github.superjoy0502.lifesteal.listener.PlayerListener
-import io.github.superjoy0502.lifesteal.math.PlayerSpawner
+import io.github.superjoy0502.lifesteals.listener.PlayerListener
+import io.github.superjoy0502.lifesteals.math.PlayerSpawner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component

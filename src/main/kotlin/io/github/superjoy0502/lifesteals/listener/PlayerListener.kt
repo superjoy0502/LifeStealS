@@ -1,6 +1,6 @@
-package io.github.superjoy0502.lifesteal.listener
+package io.github.superjoy0502.lifesteals.listener
 
-import io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin
+import io.github.superjoy0502.lifesteals.plugin.LifeStealPlugin
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import org.bukkit.ChatColor

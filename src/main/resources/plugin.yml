@@ -1,4 +1,4 @@
-name: LifeSteal
+name: LifeStealS
 version: ${project.version}
 author: Dongwoo Kim
 main: io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin

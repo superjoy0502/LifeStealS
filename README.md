@@ -1,15 +1,14 @@
-# Paper plugin sample (Kotlin)
+# LifeStealS
 
 [![Kotlin](https://img.shields.io/badge/java-17-ED8B00.svg?logo=java)](https://www.azul.com/)
 [![Kotlin](https://img.shields.io/badge/kotlin-1.6.0-585DEF.svg?logo=kotlin)](http://kotlinlang.org)
 [![Gradle](https://img.shields.io/badge/gradle-7.3-02303A.svg?logo=gradle)](https://gradle.org)
-[![GitHub](https://img.shields.io/github/license/monun/paper-sample)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Kotlin](https://img.shields.io/badge/youtube-각별-red.svg?logo=youtube)](https://www.youtube.com/channel/UCDrAR1OWC2MD4s0JLetN0MA)
+[![GitHub](https://img.shields.io/github/license/superjoy0502/LifeSteal)](https://github.com/superjoy0502/LifeSteal/blob/master/LICENSE.md)
 
-### Suggested libraries
-* #### `io.github.monun:tap` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/tap)](https://search.maven.org/artifact/io.github.monun/tap/)
-* #### `io.github.monun:invfx` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/invfx)](https://search.maven.org/artifact/io.github.monun/invfx/)
-* #### `io.github.monun:kommand` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/kommand)](https://search.maven.org/artifact/io.github.monun/kommand/)
-* #### `io.github.monun:heartbeat-coroutines` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/heartbeat-coroutines)](https://search.maven.org/artifact/io.github.monun/heartbeat-coroutines/)
-* #### `org.jetbrains.exposed:exposed-core` [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.exposed/exposed-core)](https://search.maven.org/artifact/org.jetbrains.exposed/exposed-core/)
-* #### `org.jetbrains.kotlinx:kotlinx-coroutines-core` [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlinx/kotlinx-coroutines-core)](https://search.maven.org/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core/)
+### Credits
+* [@superjoy0502](https://github.com/superjoy0502) - Main Developer
+* @sweetenpotato - Designer
+* [@Daybreak365](https://github.com/Daybreak365) - Assistance
+* [@monun](https://github.com/monun) - External Libraries
+    * #### `io.github.monun:kommand` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/kommand)](https://search.maven.org/artifact/io.github.monun/kommand/) [![Github](https://img.shields.io/github/license/monun/kommand)](https://github.com/monun/kommand/blob/master/LICENSE.md)
+    * #### `io.github.monun:heartbeat-coroutines` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/heartbeat-coroutines)](https://search.maven.org/artifact/io.github.monun/heartbeat-coroutines/) [![Github](https://img.shields.io/github/license/monun/heartbeat-coroutines)](https://github.com/monun/heartbeat-coroutines/blob/master/LICENSE.md)

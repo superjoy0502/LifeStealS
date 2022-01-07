@@ -1,4 +1,4 @@
-package io.github.superjoy0502.lifesteal.math
+package io.github.superjoy0502.lifesteals.math
 
 import org.bukkit.Location
 import kotlin.math.PI
