@@ -23,8 +23,6 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
     var currentPhaseLength = phaseLength
     var phaseColor = BarColor.RED
     var penaltyString = ""
-    var penaltyId = -1
-    var hardCorePenaltyId = -1
     lateinit var phaseScope: CoroutineScope
     lateinit var fixTimeScope: CoroutineScope
     lateinit var fixDifficultyScope: CoroutineScope
@@ -70,7 +68,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         if (phase == 1 || phase == 2) return // phase 1, 2
         else if (phase in 3..6) { // phase 3 ~ 6
 
-            penaltyId = (0..4).random()
+            val penaltyId = (0..4).random()
 
             when (penaltyId) {
 
