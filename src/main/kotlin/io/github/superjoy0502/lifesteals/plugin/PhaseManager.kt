@@ -4,17 +4,15 @@ import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.monun.heartbeat.coroutines.Suspension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.title.Title
 import org.bukkit.ChatColor
 import org.bukkit.Difficulty
-import org.bukkit.GameMode
 import org.bukkit.GameRule
-import org.bukkit.attribute.Attribute
 import org.bukkit.boss.BarColor
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class PhaseManager(private val plugin: LifeStealPlugin) {
 
@@ -27,6 +25,9 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
     lateinit var fixTimeScope: CoroutineScope
     lateinit var fixDifficultyScope: CoroutineScope
     lateinit var fixWeatherScope: CoroutineScope
+    private val barColorList = listOf(BarColor.RED, BarColor.GREEN, BarColor.BLUE, BarColor.PURPLE, BarColor.PINK, BarColor.WHITE, BarColor.YELLOW)
+    var isTrackingClosestPlayer = false
+    var playerTrackingMap: Map<Player, Player> = mapOf()
 
     fun phaseCoroutine() {
 
@@ -34,7 +35,34 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
         phase++
         phaseLength = if (phase < 7) 300 else 180
-        val barColorList = listOf(BarColor.RED, BarColor.GREEN, BarColor.BLUE, BarColor.PURPLE, BarColor.PINK, BarColor.WHITE, BarColor.YELLOW)
+        isTrackingClosestPlayer = false
+        playerTrackingMap = mapOf()
+
+        if (phase == 17) {
+
+            plugin.bossBar.color = BarColor.RED
+            plugin.bossBar.setTitle("PHASE 17: ENDGAME")
+            plugin.bossBar.progress = 1.0
+            plugin.lifeStealValue = 10
+            for (world in plugin.server.worlds) {
+
+                world.difficulty = Difficulty.HARD
+
+            }
+            for (world in plugin.server.worlds) {
+
+                world.setStorm(true)
+                world.isThundering = true
+                world.setGameRule(GameRule.DO_WEATHER_CYCLE, false)
+
+            }
+            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
+            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 1))
+            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 1))
+
+            return
+
+        }
         phaseColor = barColorList[(0..7).random()]
         plugin.bossBar.color = phaseColor
         phaseScope.launch {
@@ -60,13 +88,14 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
         val remainingTime = convertSecondsToMinutesAndSeconds(currentPhaseLength)
         plugin.bossBar.setTitle("PHASE $phase: ${remainingTime[0]}m ${remainingTime[1]}s")
+        plugin.bossBar.progress = currentPhaseLength / phaseLength.toDouble()
 
     }
 
     fun applyPenaltyToPlayers() {
 
-        if (phase == 1 || phase == 2) return // phase 1, 2
-        else if (phase in 3..6) { // phase 3 ~ 6
+        if (phase == 1 || phase == 2) return // phase 1, 2 (Phase Time = 5 min)
+        else if (phase in 3..6) { // phase 3 ~ 6 (Phase Time = 5 min)
 
             val penaltyId = (0..4).random()
 
@@ -96,7 +125,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
                     for (player in plugin.survivorList) {
 
-                        player.removeHeart(1, plugin)
+                        player.removeHeart(2.0, plugin)
 
                     }
 
@@ -118,7 +147,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
             }
 
         }
-        else if (phase in 7..16) { // phase 7 ~ 16
+        else if (phase in 7..16) { // phase 7 ~ 16 (Phase Time = 3 min)
 
             val decider = (1..100).random()
 
@@ -149,14 +178,45 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                 }
                 decider in 21..40 -> { // 가장 가까운 플레이어에게 위치를 가르키는 나침반 지급 - 20%
 
-                    // TODO
+                    for (player in plugin.survivorList) {
+
+                        lateinit var closestPlayer: Player
+                        var distanceToClosestPlayer: Double = 0.0
+                        val pLoc = player.location
+
+                        for (target in plugin.survivorList) {
+
+                            if (player == target) continue
+
+                            val tLoc = target.location
+                            val distanceBetweenPlayerAndTarget =
+                                sqrt(
+                                    sqrt((pLoc.x - tLoc.x).pow(2) + (pLoc.z - tLoc.z).pow(2)).pow(2)
+                                            + (pLoc.y - tLoc.y).pow(2)
+                                )
+
+                            if (distanceToClosestPlayer < distanceBetweenPlayerAndTarget) {
+
+                                distanceToClosestPlayer = distanceBetweenPlayerAndTarget
+                                closestPlayer = target
+
+                            }
+
+                        }
+
+                        // Turn on player tracker
+                        playerTrackingMap += Pair(player, closestPlayer)
+
+                    }
+
+                    isTrackingClosestPlayer = true
 
                 }
                 decider in 41..50 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소 - 10%
 
                     for (player in plugin.survivorList) {
 
-                        player.removeHeart(1, plugin)
+                        player.removeHeart(2.0, plugin)
 
                     }
 
@@ -216,22 +276,19 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         fixWeatherScope.launch {
 
             val suspension = Suspension()
-            repeat(phaseLength / 10) {
+            for (world in plugin.server.worlds) {
 
-                for (world in plugin.server.worlds) {
-
-                    world.setStorm(true)
-                    world.isThundering = true
-
-                }
-
-                suspension.delay(10000L)
+                world.setStorm(true)
+                world.isThundering = true
+                world.setGameRule(GameRule.DO_WEATHER_CYCLE, false)
 
             }
+            suspension.delay(phaseLength * 1000L)
             for (world in plugin.server.worlds) {
 
                 world.setStorm(false)
                 world.isThundering = false
+                world.setGameRule(GameRule.DO_WEATHER_CYCLE, true)
 
             }
 
@@ -272,7 +329,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                 world.difficulty = difficulty
 
             }
-            suspension.delay(300000L)
+            suspension.delay(phaseLength * 1000L)
             for (world in plugin.server.worlds) {
 
                 world.difficulty = Difficulty.EASY

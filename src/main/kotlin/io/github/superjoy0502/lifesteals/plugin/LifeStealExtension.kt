@@ -7,9 +7,9 @@ import org.bukkit.GameMode
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 
-fun Player.removeHeart(hearts: Int, plugin: LifeStealPlugin) {
+fun Player.removeHeart(health: Double, plugin: LifeStealPlugin) {
 
-    if (this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= (hearts * 2.0)) {
+    if (this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= health) {
 
         this.gameMode = GameMode.SPECTATOR
         plugin.survivorList.remove(player)
@@ -18,7 +18,7 @@ fun Player.removeHeart(hearts: Int, plugin: LifeStealPlugin) {
     }
     else {
 
-        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue =- (hearts * 2.0)
+        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue =- health
 
     }
 

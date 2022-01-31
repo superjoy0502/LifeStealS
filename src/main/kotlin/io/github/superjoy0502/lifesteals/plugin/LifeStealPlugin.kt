@@ -24,7 +24,7 @@ class LifeStealPlugin : JavaPlugin() {
     private val pluginVersion = "0.2.0b"
     private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.RESET}"
     private val playerListener = PlayerListener(this)
-    private val phaseManager = PhaseManager(this)
+    val phaseManager = PhaseManager(this)
 
     var started = false
     var initialized = false

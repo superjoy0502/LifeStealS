@@ -13,6 +13,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.PlayerMoveEvent
+import kotlin.math.ceil
 import kotlin.math.floor
 
 class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
@@ -31,7 +33,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
                 if (deathReason.damager is Mob) { // 몬스터에 의해 사망한 경우
 
-                    victim.removeHeart(plugin.lifeStealValue / 2, plugin)
+                    victim.removeHeart(plugin.lifeStealValue.toDouble(), plugin)
                     return
 
                 }
@@ -43,7 +45,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
             if (victim != killer) {
 
-                victim.removeHeart(plugin.lifeStealValue / 2, plugin)
+                victim.removeHeart(plugin.lifeStealValue.toDouble(), plugin)
                 killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue += plugin.lifeStealValue
 
                 return
@@ -52,18 +54,31 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
         }
         // 기타
-        val value = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue
-        if (value == 1.0) {
+        val value = ceil(victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue / 2)
+        victim.removeHeart(value, plugin)
 
-            plugin.survivorList.remove(victim)
+    }
 
-        }
-        else {
+    @EventHandler
+    fun onPlayerMove(event: PlayerMoveEvent) {
 
-            victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue =
-                floor(victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue / 2)
+        if (!plugin.phaseManager.isTrackingClosestPlayer) return
 
-        }
+        val target = event.player
+
+        for (player in getPlayersClosestToTarget(target)) player.compassTarget = target.location
+
+    }
+
+    fun getPlayersClosestToTarget(target: Player): List<Player> {
+
+        val list = arrayListOf<Player>()
+
+        if (!plugin.phaseManager.playerTrackingMap.containsValue(target)) return emptyList()
+
+        for (pair in plugin.phaseManager.playerTrackingMap) if (pair.value == target) list.add(pair.key)
+
+        return list
 
     }
 
