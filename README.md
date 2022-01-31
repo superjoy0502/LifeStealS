@@ -9,7 +9,7 @@ PVP 기반의 미니게임인 LifeStealS은 다른 플레이어를 죽여 그 �
 
 모든 체력을 다른 플레이어에게 빼앗기면 게임에서 탈락하며, 게임의 속행을 위해 게임의 난이도를 상승시키는 몇 가지 패널티가 준비되어 있습니다.
 
-### 게임 규칙
+## 게임 규칙
 
 1. 게임 시작시 모든 플레이어의 체력은 20으로 고정되며, 월드 내 랜덤한 위치로 이동합니다
   + 기본으로 지급되는 아이템
@@ -76,7 +76,7 @@ PVP 기반의 미니게임인 LifeStealS은 다른 플레이어를 죽여 그 �
    + 허기, 흉조 디버프 모두 Level 1로 고정 (영구 지속)
    + 더 이상 주기적 패널티 없음
 
-### Credits
+## Credits
 * Developers
   * [@superjoy0502](https://github.com/superjoy0502) - Main Developer
   * [@sweetenpotato](https://github.com/sweetenpotato) - Designer
