@@ -22,7 +22,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    private val pluginVersion = "1.0.1b"
+    private val pluginVersion = "1.0.2b"
     private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private var playerListener = PlayerListener(this)
     private var disconnectListener = PlayerDisconnectListener(this)
@@ -170,14 +170,14 @@ class LifeStealPlugin : JavaPlugin() {
 
     private fun start() {
 
+
         for (world in server.worlds) {
 
             world.difficulty = Difficulty.EASY
 
         }
 
-        centreLocation!!.world.worldBorder.size = 10000.0
-        centreLocation!!.world.worldBorder.center = centreLocation!!
+        reset()
 
         participantList = ArrayList(server.onlinePlayers)
         survivorList = participantList
@@ -231,8 +231,8 @@ class LifeStealPlugin : JavaPlugin() {
             BarStyle.SOLID
         )
         bossBar.isVisible = false
-        centreLocation!!.world.worldBorder.size = 10000.0
-        centreLocation!!.world.worldBorder.center = centreLocation!!
+        centreLocation?.world?.worldBorder?.size = 10000.0
+        centreLocation?.world?.worldBorder?.center = centreLocation!!
 
     }
 
