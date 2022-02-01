@@ -6,4 +6,5 @@ api-version: 1.18
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.6.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.0
+  - io.github.monun:kommand:2.8.1
   - io.github.monun:kommand-core:2.8.1

@@ -22,7 +22,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    private val pluginVersion = "1.2.2b"
+    private val pluginVersion = "1.2.3b"
     private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private var playerListener = PlayerListener(this)
     private var disconnectListener = PlayerDisconnectListener(this)
@@ -225,11 +225,6 @@ class LifeStealPlugin : JavaPlugin() {
         lifeStealValue = 2
         Bukkit.getPluginManager().registerEvents(playerListener, this)
         Bukkit.getPluginManager().registerEvents(disconnectListener, this)
-        bossBar = server.createBossBar(
-            null,
-            phaseManager.phaseColor,
-            BarStyle.SOLID
-        )
         bossBar.isVisible = false
         centreLocation?.world?.worldBorder?.size = 10000.0
         centreLocation?.world?.worldBorder?.center = centreLocation!!
