@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 class PlayerDisconnectListener(private val plugin: LifeStealPlugin) : Listener {
 
-    var playerDisconnectTimeMap = mutableMapOf<Player, Int>()
+    private var playerDisconnectTimeMap = mutableMapOf<Player, Int>()
 
     @EventHandler
     fun onPlayerDisconnect(event: PlayerQuitEvent) {

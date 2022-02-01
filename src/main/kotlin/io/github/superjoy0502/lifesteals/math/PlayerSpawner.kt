@@ -7,13 +7,13 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 class PlayerSpawner(
-    val totalPlayers: Int,
-    val centreLocation: Location,
-    val thetaZero: Int = Random.nextInt(0, 360)
+    private val totalPlayers: Int,
+    private val centreLocation: Location,
+    private val thetaZero: Int = Random.nextInt(0, 360)
 ) {
 
-    val radius = 400
-    val ySpawn = 313.0
+    private val radius = 400
+    private val ySpawn = 313.0
 
     fun getPlayerSpawnLocation(index: Int): Location {
 

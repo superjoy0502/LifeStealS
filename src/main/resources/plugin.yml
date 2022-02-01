@@ -1,7 +1,7 @@
 name: LifeStealS
 version: ${project.version}
 author: Dongwoo Kim
-main: io.github.superjoy0502.lifesteal.plugin.LifeStealPlugin
+main: io.github.superjoy0502.lifesteals.plugin.LifeStealPlugin
 api-version: 1.18
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.6.0
