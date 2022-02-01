@@ -144,7 +144,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
                     for (player in plugin.survivorList) {
 
-                        player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, phaseLength, 1))
+                        player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, phaseLength*20, 1))
 
                     }
 
@@ -266,7 +266,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                 }
                 decider in 51..70 -> { // 모든 플레이어에게 발광 효과 부여 - 20%
 
-                    applyPotionEffectToPlayers(PotionEffect(PotionEffectType.GLOWING, phaseLength, 1))
+                    applyPotionEffectToPlayers(PotionEffect(PotionEffectType.GLOWING, phaseLength*20, 1))
 
                 }
                 decider in 71..80 -> { // 5분동안 밤 12시, 난이도 어려움 고정 - 10% (조건부 +10%)
@@ -288,21 +288,21 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                     when {
 
                         debuffDecider <= 1500 -> // Mining Fatigue Level 1 - 15%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.SLOW_DIGGING, phaseLength, 1))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.SLOW_DIGGING, phaseLength*20, 1))
                         debuffDecider in 1501..2500 -> // Mining Fatigue Level 2 - 10%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.SLOW_DIGGING, phaseLength, 2))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.SLOW_DIGGING, phaseLength*20, 2))
                         debuffDecider in 2501..6500 -> // Hunger - 40%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.HUNGER, phaseLength, 1))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.HUNGER, phaseLength*20, 1))
                         debuffDecider in 6501..8100 -> // Poison Level 1 - 16%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.POISON, phaseLength, 1))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.POISON, phaseLength*20, 1))
                         debuffDecider in 8101..8900 -> // Poison Level 2 - 8%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.POISON, phaseLength, 2))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.POISON, phaseLength*20, 2))
                         debuffDecider in 8901..8975 -> // Wither Level 1 - 0.75%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.WITHER, phaseLength, 1))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.WITHER, phaseLength*20, 1))
                         debuffDecider in 8976..9000 -> // Wither Level 2 - 0.25%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.WITHER, phaseLength, 2))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.WITHER, phaseLength*20, 2))
                         else -> // Bad Omen - 10%
-                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.BAD_OMEN, phaseLength, 1))
+                            applyPotionEffectToPlayers(PotionEffect(PotionEffectType.BAD_OMEN, phaseLength*20, 1))
 
                     }
 

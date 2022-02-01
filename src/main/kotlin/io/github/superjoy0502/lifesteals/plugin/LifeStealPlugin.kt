@@ -22,7 +22,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    private val pluginVersion = "1.0.3b"
+    private val pluginVersion = "1.1.0b"
     private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private var playerListener = PlayerListener(this)
     private var disconnectListener = PlayerDisconnectListener(this)
@@ -188,7 +188,7 @@ class LifeStealPlugin : JavaPlugin() {
             player.teleport(playerSpawner.getPlayerSpawnLocation(i))
             player.gameMode = GameMode.SURVIVAL
             player.addPotionEffect(
-                PotionEffect(PotionEffectType.SLOW_FALLING, 300, 1)
+                PotionEffect(PotionEffectType.SLOW_FALLING, 300*20, 1)
             )
             player.inventory.clear()
             player.inventory.addItem(ItemStack(Material.STONE_SWORD))

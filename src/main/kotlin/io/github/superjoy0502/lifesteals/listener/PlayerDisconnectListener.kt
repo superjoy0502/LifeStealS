@@ -64,7 +64,7 @@ class PlayerDisconnectListener(private val plugin: LifeStealPlugin) : Listener {
 
         val player = event.player
 
-        if (!plugin.participantList.contains(player)) {
+        if (plugin.started && !plugin.participantList.contains(player)) {
 
             player.gameMode = GameMode.SPECTATOR
 
