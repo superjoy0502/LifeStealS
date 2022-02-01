@@ -22,7 +22,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    private val pluginVersion = "1.2.1b"
+    private val pluginVersion = "1.2.2b"
     private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private var playerListener = PlayerListener(this)
     private var disconnectListener = PlayerDisconnectListener(this)
