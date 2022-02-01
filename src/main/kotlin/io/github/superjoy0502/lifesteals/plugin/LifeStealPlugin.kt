@@ -22,7 +22,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    private val pluginVersion = "1.0.2b"
+    private val pluginVersion = "1.0.3b"
     private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private var playerListener = PlayerListener(this)
     private var disconnectListener = PlayerDisconnectListener(this)
@@ -208,7 +208,7 @@ class LifeStealPlugin : JavaPlugin() {
         for (player in server.onlinePlayers) {
 
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = 20.0
-            player.teleport(centreLocation!!)
+            if (centreLocation != null) player.teleport(centreLocation!!)
             player.gameMode = GameMode.SURVIVAL
 
         }
