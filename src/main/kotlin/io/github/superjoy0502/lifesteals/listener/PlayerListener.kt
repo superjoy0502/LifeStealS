@@ -1,19 +1,29 @@
 package io.github.superjoy0502.lifesteals.listener
 
+import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.superjoy0502.lifesteals.plugin.LifeStealPlugin
 import io.github.superjoy0502.lifesteals.plugin.removeHeart
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import org.bukkit.ChatColor
 import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.PlayerPickupItemEvent
+import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.ItemStack
+import java.awt.event.ItemEvent
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -46,7 +56,12 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
             if (victim != killer) {
 
                 victim.removeHeart(plugin.lifeStealValue.toDouble(), plugin)
-                killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue += plugin.lifeStealValue
+                val attribute = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)
+                if (attribute != null) {
+
+                    attribute.baseValue += plugin.lifeStealValue
+
+                }
 
                 return
 
@@ -54,8 +69,13 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
         }
         // 기타
-        val value = ceil(victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue / 2)
-        victim.removeHeart(value, plugin)
+        val attribute = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)
+        if (attribute != null) {
+
+            val value = ceil(attribute.baseValue / 2)
+            victim.removeHeart(value, plugin)
+
+        }
 
     }
 
@@ -67,6 +87,38 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
         val target = event.player
 
         for (player in getPlayersClosestToTarget(target)) player.compassTarget = target.location
+
+    }
+
+    @EventHandler
+    fun onCompassMove(event: InventoryMoveItemEvent) {
+
+        var isDestinationPlayer = false
+
+        if (event.item == ItemStack(Material.COMPASS)) {
+
+            for (player in plugin.survivorList) {
+
+                if (event.destination == player.inventory) isDestinationPlayer = true
+
+            }
+
+            if (isDestinationPlayer && !plugin.phaseManager.isTrackingClosestPlayer) event.isCancelled = true
+
+        }
+
+    }
+
+    @EventHandler
+    fun onCompassPickUp(event: EntityPickupItemEvent) {
+
+        if (event.entity !is Player) return
+
+        if (event.item == ItemStack(Material.COMPASS)) {
+
+            if (!plugin.phaseManager.isTrackingClosestPlayer) event.isCancelled = true
+
+        }
 
     }
 

@@ -7,10 +7,14 @@ import kotlinx.coroutines.launch
 import org.bukkit.ChatColor
 import org.bukkit.Difficulty
 import org.bukkit.GameRule
+import org.bukkit.Material
 import org.bukkit.boss.BarColor
+import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -25,19 +29,26 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
     lateinit var fixTimeScope: CoroutineScope
     lateinit var fixDifficultyScope: CoroutineScope
     lateinit var fixWeatherScope: CoroutineScope
+    lateinit var worldBorderScope: CoroutineScope
     private val barColorList = listOf(BarColor.RED, BarColor.GREEN, BarColor.BLUE, BarColor.PURPLE, BarColor.PINK, BarColor.WHITE, BarColor.YELLOW)
     var isTrackingClosestPlayer = false
     var playerTrackingMap: Map<Player, Player> = mapOf()
+    var playersWithNoCompassList = arrayListOf<Player>()
 
     fun phaseCoroutine() {
 
+        // Initialize
         phaseScope = HeartbeatScope()
-
         phase++
         phaseLength = if (phase < 7) 300 else 180
+
+        // Reset Compass Tracking
         isTrackingClosestPlayer = false
         playerTrackingMap = mapOf()
+        playersWithNoCompassList = arrayListOf()
+        for (player in plugin.survivorList) player.inventory.removeItem(ItemStack(Material.COMPASS, Integer.MAX_VALUE))
 
+        // Setup last phase
         if (phase == 17) {
 
             plugin.bossBar.color = BarColor.RED
@@ -63,6 +74,26 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
             return
 
         }
+
+        // Shrinking WorldBorder
+        if (phase == 7) {
+
+            worldBorderScope = HeartbeatScope()
+            worldBorderScope.launch {
+
+                val suspension = Suspension()
+                repeat(4950000) {
+
+                    plugin.centreLocation!!.world.worldBorder.size -= 0.002
+                    suspension.delay(1L)
+
+                }
+
+            }
+
+        }
+
+        // Setup General Phases
         phaseColor = barColorList[(0..7).random()]
         plugin.bossBar.color = phaseColor
         phaseScope.launch {
@@ -87,7 +118,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
     fun updateBossBar() {
 
         val remainingTime = convertSecondsToMinutesAndSeconds(currentPhaseLength)
-        plugin.bossBar.setTitle("PHASE $phase: ${remainingTime[0]}m ${remainingTime[1]}s")
+        plugin.bossBar.setTitle("PHASE $phase: ${remainingTime.first}m ${remainingTime.second}s")
         plugin.bossBar.progress = currentPhaseLength / phaseLength.toDouble()
 
     }
@@ -210,6 +241,18 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                     }
 
                     isTrackingClosestPlayer = true
+
+                    for (player in plugin.survivorList) {
+
+                        if (player.inventory.addItem(ItemStack(Material.COMPASS)).isNotEmpty()) {
+
+                            playersWithNoCompassList.add(player)
+
+                        }
+
+                        player.sendMessage("인벤토리가 꽉 차있어 나침반이 지급되지 않았습니다. /lifesteal compass 명령어를 사용해서 받아주세요.")
+
+                    }
 
                 }
                 decider in 41..50 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소 - 10%
@@ -350,12 +393,12 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
     }
 
-    fun convertSecondsToMinutesAndSeconds(seconds: Int): List<Int> {
+    fun convertSecondsToMinutesAndSeconds(seconds: Int): Pair<Int, Int> {
 
-        val minutes = seconds / 60
+        val minutes = floor(seconds / 60.0).toInt()
         val seconds = seconds % 60
 
-        return listOf(minutes, seconds)
+        return Pair(minutes, seconds)
 
     }
 

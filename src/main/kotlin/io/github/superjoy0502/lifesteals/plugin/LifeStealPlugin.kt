@@ -1,6 +1,7 @@
 package io.github.superjoy0502.lifesteals.plugin
 
 import io.github.monun.kommand.kommand
+import io.github.superjoy0502.lifesteals.listener.PlayerDisconnectListener
 import io.github.superjoy0502.lifesteals.listener.PlayerListener
 import io.github.superjoy0502.lifesteals.math.PlayerSpawner
 import net.kyori.adventure.text.Component
@@ -21,10 +22,11 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    private val pluginVersion = "0.2.0b"
-    private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.RESET}"
-    private val playerListener = PlayerListener(this)
-    val phaseManager = PhaseManager(this)
+    private val pluginVersion = "1.0.0b"
+    private val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
+    private var playerListener = PlayerListener(this)
+    private var disconnectListener = PlayerDisconnectListener(this)
+    var phaseManager = PhaseManager(this)
 
     var started = false
     var initialized = false
@@ -32,20 +34,13 @@ class LifeStealPlugin : JavaPlugin() {
     var survivorList: ArrayList<Player> = ArrayList()
     var centreLocation: Location? = null
     var lifeStealValue = 2
-//    lateinit var worldBorderScope: CoroutineScope
     lateinit var bossBar: BossBar
 
     override fun onEnable() {
 
         logger.info("$lifesteal 플러그인 v$pluginVersion 이 가동했습니다!")
-        Bukkit.getPluginManager().registerEvents(playerListener, this)
 
-        bossBar = server.createBossBar(
-            null,
-            phaseManager.phaseColor,
-            BarStyle.SOLID
-        )
-        bossBar.isVisible = false
+        reset()
 
         kommand {
 
@@ -60,7 +55,7 @@ class LifeStealPlugin : JavaPlugin() {
                             $lifesteal 플러그인 v$pluginVersion
                             ====================도움말====================
                             /lifesteal - 이 도움말을 출력합니다
-                            /lifesteal init - $lifesteal 게임의 중심 위치을 정합니다
+                            /lifesteal init - $lifesteal 게임의 중심 좌표(기본값 0, 0)를 정합니다
                             /lifesteal start - $lifesteal 게임을 시작합니다
                         """.trimIndent()
                     )
@@ -124,6 +119,32 @@ class LifeStealPlugin : JavaPlugin() {
 
                 }
 
+                then("compass") {
+
+                    permission("lifesteal.commands.compass")
+
+                    executes {
+
+                        if (phaseManager.playersWithNoCompassList.contains(player)) {
+
+                            if (player.inventory.addItem(ItemStack(Material.COMPASS)).isNotEmpty()) {
+
+                                player.sendMessage("인벤토리가 꽉 차있어 나침반이 지급되지 않았습니다. /lifesteal compass 명령어를 사용해서 받아주세요.")
+
+                            }
+                            else {
+
+                                phaseManager.playersWithNoCompassList.remove(player)
+
+                            }
+
+                        }
+                        else player.sendMessage("나침반을 지급 받을 수 없습니다!")
+
+                    }
+
+                }
+
                 then("debug") {
 
                     executes {
@@ -182,9 +203,36 @@ class LifeStealPlugin : JavaPlugin() {
 
     }
 
-    fun reset() {
+    private fun reset() {
 
-        // TODO
+        for (player in server.onlinePlayers) {
+
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = 20.0
+            player.teleport(centreLocation!!)
+            player.gameMode = GameMode.SURVIVAL
+
+        }
+        for (player in participantList) player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = 20.0
+        survivorList = arrayListOf()
+        participantList = arrayListOf()
+        playerListener = PlayerListener(this)
+        disconnectListener = PlayerDisconnectListener(this)
+        phaseManager = PhaseManager(this)
+        started = false
+        initialized = false
+        participantList = ArrayList()
+        survivorList = ArrayList()
+        lifeStealValue = 2
+        Bukkit.getPluginManager().registerEvents(playerListener, this)
+        Bukkit.getPluginManager().registerEvents(disconnectListener, this)
+        bossBar = server.createBossBar(
+            null,
+            phaseManager.phaseColor,
+            BarStyle.SOLID
+        )
+        bossBar.isVisible = false
+        centreLocation!!.world.worldBorder.size = 10000.0
+        centreLocation!!.world.worldBorder.center = centreLocation!!
 
     }
 
@@ -193,9 +241,9 @@ class LifeStealPlugin : JavaPlugin() {
         for (player in server.onlinePlayers) {
 
             player.showTitle(Title.title(
-                Component.text("${ChatColor.GREEN}${survivorList[0].name}님 우승!"),
+                Component.text("${ChatColor.GREEN}${winner.name}님 우승!"),
                 Component.text(
-                    "${ChatColor.RED}Max HP: ${survivorList[0].getAttribute(Attribute.GENERIC_MAX_HEALTH)}")))
+                    "${ChatColor.RED}Max HP: ${winner.getAttribute(Attribute.GENERIC_MAX_HEALTH)}")))
 
         }
 

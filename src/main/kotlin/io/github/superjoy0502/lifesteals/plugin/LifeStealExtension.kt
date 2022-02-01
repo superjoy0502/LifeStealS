@@ -15,10 +15,16 @@ fun Player.removeHeart(health: Double, plugin: LifeStealPlugin) {
         plugin.survivorList.remove(player)
         this.showTitle(Title.title(Component.text("${ChatColor.RED}탈락하셨습니다"), Component.empty()))
 
+        if (plugin.survivorList.size == 1) {
+
+            plugin.endGame(plugin.survivorList[0])
+
+        }
+
     }
     else {
 
-        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue =- health
+        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =- health
 
     }
 
