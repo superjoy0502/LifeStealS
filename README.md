@@ -1,8 +1,8 @@
 # LifeStealS
 
 [![Java](https://img.shields.io/badge/java-17-ED8B00.svg?logo=java)](https://openjdk.java.net/)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.6.0-585DEF.svg?logo=kotlin)](http://kotlinlang.org)
-[![Gradle](https://img.shields.io/badge/gradle-7.3-02303A.svg?logo=gradle)](https://gradle.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.6.10-585DEF.svg?logo=kotlin)](http://kotlinlang.org)
+[![Gradle](https://img.shields.io/badge/gradle-7.3.3-02303A.svg?logo=gradle)](https://gradle.org)
 [![GitHub](https://img.shields.io/github/license/superjoy0502/LifeSteal)](https://github.com/superjoy0502/LifeSteal/blob/master/LICENSE.md)
 
 PVP 기반의 미니게임인 LifeStealS은 다른 플레이어를 죽여 그 플레이어의 체력을 일부 빼앗고 끝까지 살아남기 위해 노력하는 게임입니다.

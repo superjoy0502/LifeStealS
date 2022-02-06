@@ -51,9 +51,9 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         // Setup last phase
         if (phase == 17) {
 
-            plugin.bossBar.color = BarColor.RED
-            plugin.bossBar.setTitle("PHASE 17: ENDGAME")
-            plugin.bossBar.progress = 1.0
+            plugin.bossBar?.color = BarColor.RED
+            plugin.bossBar?.setTitle("PHASE 17: ENDGAME")
+            plugin.bossBar?.progress = 1.0
             plugin.lifeStealValue = 10
             for (world in plugin.server.worlds) {
 
@@ -95,7 +95,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
         // Setup General Phases
         phaseColor = barColorList[(0..7).random()]
-        plugin.bossBar.color = phaseColor
+        plugin.bossBar?.color = phaseColor
         phaseScope.launch {
 
             applyPenaltyToPlayers()
@@ -118,8 +118,8 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
     fun updateBossBar() {
 
         val remainingTime = convertSecondsToMinutesAndSeconds(currentPhaseLength)
-        plugin.bossBar.setTitle("PHASE $phase: ${remainingTime.first}m ${remainingTime.second}s")
-        plugin.bossBar.progress = currentPhaseLength / phaseLength.toDouble()
+        plugin.bossBar?.setTitle("PHASE $phase: ${remainingTime.first}m ${remainingTime.second}s")
+        plugin.bossBar?.progress = currentPhaseLength / phaseLength.toDouble()
 
     }
 
