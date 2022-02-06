@@ -70,8 +70,6 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
 
-        if (plugin.phaseManager)
-
         if (plugin.phaseManager.isTrackingClosestPlayer) {
 
             val target = event.player
