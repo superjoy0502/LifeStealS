@@ -1,14 +1,7 @@
 package io.github.superjoy0502.lifesteals.listener
 
-import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.superjoy0502.lifesteals.plugin.LifeStealPlugin
 import io.github.superjoy0502.lifesteals.plugin.removeHeart
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.title.Title
-import org.bukkit.ChatColor
-import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Mob
@@ -20,12 +13,8 @@ import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.event.player.PlayerMoveEvent
-import org.bukkit.event.player.PlayerPickupItemEvent
-import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
-import java.awt.event.ItemEvent
 import kotlin.math.ceil
-import kotlin.math.floor
 
 class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
@@ -50,8 +39,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
             }
 
-        }
-        else { // 플레이어에 의해 사망한 경우
+        } else { // 플레이어에 의해 사망한 경우
 
             if (victim != killer) {
 
@@ -82,11 +70,15 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
     @EventHandler
     fun onPlayerMove(event: PlayerMoveEvent) {
 
-        if (!plugin.phaseManager.isTrackingClosestPlayer) return
+        if (plugin.phaseManager)
 
-        val target = event.player
+        if (plugin.phaseManager.isTrackingClosestPlayer) {
 
-        for (player in getPlayersClosestToTarget(target)) player.compassTarget = target.location
+            val target = event.player
+
+            for (player in getPlayersClosestToTarget(target)) player.compassTarget = target.location
+
+        }
 
     }
 

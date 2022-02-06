@@ -3,7 +3,22 @@ version: ${project.version}
 author: Dongwoo Kim
 main: io.github.superjoy0502.lifesteals.plugin.LifeStealPlugin
 api-version: 1.18
+commands:
+  lifesteal:
+    description: Basic LifeStealS command
+    usage: /<command> [arguments]
+    permission: lifesteals.basics
+  compass:
+    description: Gives a compass to player
+    usage: /<command>
+    permission: lifesteals.compass
+permissions:
+  lifesteals.basics:
+    description: Cool commands for LifeStealS
+    default: op
+  lifesteals.compass:
+    description: Tiny permission for the innocents
+    default: true
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.6.0
   - org.jetbrains.kotlin:kotlin-reflect:1.6.0
-  - io.github.monun:kommand:2.8.1

@@ -21,10 +21,9 @@ fun Player.removeHeart(health: Double, plugin: LifeStealPlugin) {
 
         }
 
-    }
-    else {
+    } else {
 
-        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =- health
+        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = -health
 
     }
 

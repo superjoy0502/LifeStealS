@@ -89,5 +89,4 @@ PVP 기반의 미니게임인 LifeStealS은 다른 플레이어를 죽여 그 �
   * [@Daybreak365](https://github.com/Daybreak365)
 * Special Thanks
   * [@monun](https://github.com/monun) - External Libraries
-      * #### `io.github.monun:kommand` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/kommand)](https://search.maven.org/artifact/io.github.monun/kommand/) [![Github](https://img.shields.io/github/license/monun/kommand)](https://github.com/monun/kommand/blob/master/LICENSE.md)
       * #### `io.github.monun:heartbeat-coroutines` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/heartbeat-coroutines)](https://search.maven.org/artifact/io.github.monun/heartbeat-coroutines/) [![Github](https://img.shields.io/github/license/monun/heartbeat-coroutines)](https://github.com/monun/heartbeat-coroutines/blob/master/LICENSE.md)
