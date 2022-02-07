@@ -80,6 +80,7 @@ PVP 기반의 미니게임인 LifeStealS은 다른 플레이어를 죽여 그 �
 * /lifesteal - 이 도움말을 출력합니다
 * /lifesteal init - LifeStealS 게임의 중심 좌표(기본값 0, 0)를 정합니다
 * /lifesteal start - LifeStealS 게임을 시작합니다
+* /compass - (조건부) 가장 가까운 플레이어를 추적하는 나침반을 얻습니다
 
 ## 크레딧
 * Developers
