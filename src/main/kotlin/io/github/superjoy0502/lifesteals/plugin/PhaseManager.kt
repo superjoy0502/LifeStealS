@@ -120,22 +120,23 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         phaseColor = barColorList[random]
         plugin.bossBar?.color = phaseColor
 
-        for (player in plugin.server.onlinePlayers) {
-
-            player.showTitle(
-                Title.title(
-                    Component.text("${textColorList[random]}PHASE $phase"),
-                    Component.text(
-                        penaltyString
-                    )
-                )
-            )
-
-        }
-
         phaseScope.launch {
 
             applyPenaltyToPlayers()
+
+            for (player in plugin.server.onlinePlayers) {
+
+                player.showTitle(
+                    Title.title(
+                        Component.text("${textColorList[random]}PHASE $phase"),
+                        Component.text(
+                            penaltyString
+                        )
+                    )
+                )
+
+            }
+
             val suspension = Suspension()
             currentPhaseLength = phaseLength
             repeat(phaseLength) {

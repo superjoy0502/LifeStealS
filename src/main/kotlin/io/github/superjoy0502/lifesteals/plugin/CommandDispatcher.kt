@@ -55,7 +55,7 @@ class CommandDispatcher(val plugin: LifeStealPlugin) : CommandExecutor {
                     if (plugin.started) {
 
                         sender.sendMessage(
-                            "${ChatColor.RED}이미 게임은 시작되었습니다${ChatColor.RESET}" +
+                            "${ChatColor.RED}이미 게임은 시작되었습니다${ChatColor.RESET}\n" +
                                     "게임은 최후의 1인이 남을때까지 계속됩니다"
                         )
                         return true
@@ -84,7 +84,7 @@ class CommandDispatcher(val plugin: LifeStealPlugin) : CommandExecutor {
                     if (plugin.started) {
 
                         sender.sendMessage(
-                            "${ChatColor.RED}이미 게임은 시작되었습니다${ChatColor.RESET}" +
+                            "${ChatColor.RED}이미 게임은 시작되었습니다${ChatColor.RESET}\n" +
                                     "게임은 최후의 1인이 남을때까지 계속됩니다"
                         )
                         return true

@@ -32,6 +32,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
                 if (deathReason.damager is Mob) { // 몬스터에 의해 사망한 경우
 
+//                    println("MONSTER Removing ${plugin.lifeStealValue.toDouble()} health from ${victim.name}")
                     victim.removeHeart(plugin.lifeStealValue.toDouble(), plugin)
                     return
 
@@ -43,6 +44,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
             if (victim != killer) {
 
+//                println("PLAYER Removing ${plugin.lifeStealValue.toDouble()} health from ${victim.name}")
                 victim.removeHeart(plugin.lifeStealValue.toDouble(), plugin)
                 val attribute = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)
                 if (attribute != null) {
@@ -61,7 +63,10 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
         if (attribute != null) {
 
             val value = ceil(attribute.baseValue / 2)
+//            println("ELSE Removing $value health from ${victim.name}")
             victim.removeHeart(value, plugin)
+
+            return
 
         }
 

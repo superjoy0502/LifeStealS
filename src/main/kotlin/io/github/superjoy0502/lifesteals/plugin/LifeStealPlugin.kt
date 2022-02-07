@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    val pluginVersion = "1.2.13b"
+    val pluginVersion = "1.2.19b"
     private val commandDispatcher = CommandDispatcher(this)
     val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private var playerListener = PlayerListener(this)
@@ -60,11 +60,18 @@ class LifeStealPlugin : JavaPlugin() {
 
         participantList = ArrayList(server.onlinePlayers)
         survivorList = participantList
+        bossBar = server.createBossBar(
+            null,
+            phaseManager.phaseColor,
+            BarStyle.SOLID
+        )
         bossBar?.isVisible = true
+        println(bossBar!!.isVisible)
         val playerSpawner = PlayerSpawner(participantList.size, centreLocation!!)
         for (i in 0 until participantList.size) {
 
             val player = participantList[i]
+            bossBar?.addPlayer(player)
             player.teleport(playerSpawner.getPlayerSpawnLocation(i))
             player.gameMode = GameMode.SURVIVAL
             player.addPotionEffect(
@@ -75,6 +82,7 @@ class LifeStealPlugin : JavaPlugin() {
             player.inventory.addItem(ItemStack(Material.STONE_AXE))
             player.inventory.addItem(ItemStack(Material.STONE_PICKAXE))
             player.inventory.addItem(ItemStack(Material.BREAD, 10))
+            player.world.time = 0
 
         }
         started = true
@@ -92,7 +100,6 @@ class LifeStealPlugin : JavaPlugin() {
             player.gameMode = GameMode.SURVIVAL
 
         }
-        for (player in participantList) player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = 20.0
         survivorList = arrayListOf()
         participantList = arrayListOf()
         playerListener = PlayerListener(this)
@@ -106,11 +113,6 @@ class LifeStealPlugin : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(playerListener, this)
         Bukkit.getPluginManager().registerEvents(disconnectListener, this)
         if (bossBar != null) bossBar!!.isVisible = false
-        bossBar = server.createBossBar(
-            null,
-            phaseManager.phaseColor,
-            BarStyle.SOLID
-        )
         centreLocation?.world?.worldBorder?.size = 10000.0
         centreLocation?.world?.worldBorder?.center = centreLocation!!
 
