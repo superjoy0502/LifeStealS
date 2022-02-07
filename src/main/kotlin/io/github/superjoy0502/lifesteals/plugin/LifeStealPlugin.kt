@@ -21,11 +21,11 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    val pluginVersion = "1.2.19b"
+    val pluginVersion = "1.2.21b"
     private val commandDispatcher = CommandDispatcher(this)
     val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
-    private var playerListener = PlayerListener(this)
-    private var disconnectListener = PlayerDisconnectListener(this)
+    private val playerListener = PlayerListener(this)
+    private val disconnectListener = PlayerDisconnectListener(this)
     var phaseManager = PhaseManager(this)
 
     var started = false
@@ -42,6 +42,8 @@ class LifeStealPlugin : JavaPlugin() {
 
         reset()
 
+        Bukkit.getPluginManager().registerEvents(playerListener, this)
+        Bukkit.getPluginManager().registerEvents(disconnectListener, this)
         getCommand("lifesteal")?.setExecutor(commandDispatcher)
         getCommand("compass")?.setExecutor(commandDispatcher)
 
@@ -83,6 +85,7 @@ class LifeStealPlugin : JavaPlugin() {
             player.inventory.addItem(ItemStack(Material.STONE_PICKAXE))
             player.inventory.addItem(ItemStack(Material.BREAD, 10))
             player.world.time = 0
+            if (centreLocation != null) player.world.spawnLocation = centreLocation!!
 
         }
         started = true
@@ -102,16 +105,13 @@ class LifeStealPlugin : JavaPlugin() {
         }
         survivorList = arrayListOf()
         participantList = arrayListOf()
-        playerListener = PlayerListener(this)
-        disconnectListener = PlayerDisconnectListener(this)
+        disconnectListener.playerDisconnectTimeMap = mutableMapOf<Player, Int>()
         phaseManager = PhaseManager(this)
         started = false
         initialized = false
         participantList = ArrayList()
         survivorList = ArrayList()
         lifeStealValue = 2
-        Bukkit.getPluginManager().registerEvents(playerListener, this)
-        Bukkit.getPluginManager().registerEvents(disconnectListener, this)
         if (bossBar != null) bossBar!!.isVisible = false
         centreLocation?.world?.worldBorder?.size = 10000.0
         centreLocation?.world?.worldBorder?.center = centreLocation!!

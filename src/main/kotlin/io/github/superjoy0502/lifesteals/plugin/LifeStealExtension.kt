@@ -22,13 +22,15 @@ fun Player.removeHeart(health: Double, plugin: LifeStealPlugin) {
             plugin.endGame(plugin.survivorList[0])
 
         }
+        return
 
     } else {
 
 //        println("Before ${this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue}")
 //        println("Health $health")
-        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue =- health
+        this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! - health
 //        println("After ${this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue}")
+        return
 
     }
 

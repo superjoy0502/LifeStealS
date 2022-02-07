@@ -23,6 +23,8 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
         if (!plugin.started) return // 게임 시작했는지 확인
 
+//        println("Event")
+
         val victim = event.player
         val killer = victim.killer
         val deathReason = victim.lastDamageCause
@@ -63,7 +65,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
         if (attribute != null) {
 
             val value = ceil(attribute.baseValue / 2)
-//            println("ELSE Removing $value health from ${victim.name}")
+//            println("ELSE ${event.deathMessage()}")
             victim.removeHeart(value, plugin)
 
             return
