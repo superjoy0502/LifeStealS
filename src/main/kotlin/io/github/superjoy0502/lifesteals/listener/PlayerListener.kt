@@ -51,7 +51,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
                 val attribute = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH)
                 if (attribute != null) {
 
-                    attribute.baseValue += plugin.lifeStealValue
+                    attribute.baseValue = attribute.baseValue + plugin.lifeStealValue
 
                 }
 
