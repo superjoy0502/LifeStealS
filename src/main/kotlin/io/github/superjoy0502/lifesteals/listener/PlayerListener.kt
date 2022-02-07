@@ -64,7 +64,8 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
         val attribute = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH)
         if (attribute != null) {
 
-            val value = ceil(attribute.baseValue / 2)
+            var value = attribute.baseValue / 2
+            if (value.toInt() % 2 == 1) value += 1
 //            println("ELSE ${event.deathMessage()}")
             victim.removeHeart(value, plugin)
 

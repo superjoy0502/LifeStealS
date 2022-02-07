@@ -116,7 +116,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         }
 
         // Setup General Phases
-        val random = (0..7).random()
+        val random = (0..6).random()
         phaseColor = barColorList[random]
         plugin.bossBar?.color = phaseColor
 
