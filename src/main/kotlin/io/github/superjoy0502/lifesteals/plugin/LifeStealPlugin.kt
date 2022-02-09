@@ -11,10 +11,11 @@ import org.bukkit.boss.BarStyle
 import org.bukkit.boss.BossBar
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.ShapedRecipe
+import org.bukkit.inventory.Recipe
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+
 
 /**
  * @author Dongwoo Kim
@@ -22,7 +23,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    val pluginVersion = "1.2.25b"
+    val pluginVersion = "1.3.0b"
     private val commandDispatcher = CommandDispatcher(this)
     val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private val playerListener = PlayerListener(this)
@@ -49,13 +50,14 @@ class LifeStealPlugin : JavaPlugin() {
         getCommand("lifesteal")?.setExecutor(commandDispatcher)
         getCommand("compass")?.setExecutor(commandDispatcher)
 
-        val key = NamespacedKey(this, "no_compass")
-        val recipe = ShapedRecipe(key, ItemStack(Material.AIR))
-        recipe.shape(" I ", "IRI", " I ")
-        recipe.setIngredient('I', Material.IRON_INGOT)
-        recipe.setIngredient('R', Material.REDSTONE)
+        val it = server.recipeIterator()
+        var recipe: Recipe?
+        while (it.hasNext()) {
 
-        Bukkit.addRecipe(recipe)
+            recipe = it.next()
+            if (recipe != null && recipe.result.type == Material.COMPASS) it.remove()
+
+        }
 
     }
 
