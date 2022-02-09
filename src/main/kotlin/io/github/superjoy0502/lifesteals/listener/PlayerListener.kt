@@ -89,7 +89,7 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
     }
 
     @EventHandler
-    fun onCompassMove(event: InventoryMoveItemEvent) {
+    fun onCompassMoveInventory(event: InventoryMoveItemEvent) {
 
         var isDestinationPlayer = false
 
