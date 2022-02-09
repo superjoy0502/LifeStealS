@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    val pluginVersion = "1.2.22b"
+    val pluginVersion = "1.2.24b"
     private val commandDispatcher = CommandDispatcher(this)
     val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private val playerListener = PlayerListener(this)
@@ -39,6 +39,7 @@ class LifeStealPlugin : JavaPlugin() {
     override fun onEnable() {
 
         logger.info("$lifesteal 플러그인 v$pluginVersion 이 가동했습니다!")
+        logger.info("Made by ${ChatColor.GOLD}Dongwoo Kim${ChatColor.RESET} (https://github.com/superjoy0502/LifeStealS)")
 
         reset()
 

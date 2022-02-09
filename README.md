@@ -91,3 +91,4 @@ PVP 기반의 미니게임인 LifeStealS은 다른 플레이어를 죽여 그 �
 * Special Thanks
   * [@monun](https://github.com/monun) - External Libraries
       * #### `io.github.monun:heartbeat-coroutines` [![Maven Central](https://img.shields.io/maven-central/v/io.github.monun/heartbeat-coroutines)](https://search.maven.org/artifact/io.github.monun/heartbeat-coroutines/) [![Github](https://img.shields.io/github/license/monun/heartbeat-coroutines)](https://github.com/monun/heartbeat-coroutines/blob/master/LICENSE.md)
+  * [플래그 Flag](https://www.youtube.com/channel/UC2eGI7us9gmMahbByyPnTwg)
