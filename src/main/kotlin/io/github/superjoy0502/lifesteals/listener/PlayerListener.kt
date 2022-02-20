@@ -8,9 +8,7 @@ import org.bukkit.Material
 import org.bukkit.attribute.Attribute
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.Bed
-import org.bukkit.entity.Item
-import org.bukkit.entity.Mob
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
@@ -45,6 +43,17 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 //                    println("MONSTER Removing ${plugin.lifeStealValue.toDouble()} health from ${victim.name}")
                     victim.removeHeart(plugin.lifeStealValue.toDouble(), plugin)
                     return
+
+                }
+                else if (deathReason.damager is Arrow) { // 화살에 의해 사망한 경우
+
+                    val arrow = deathReason.damager as Arrow
+                    if (arrow.shooter is Skeleton) {
+
+                        victim.removeHeart(plugin.lifeStealValue.toDouble(), plugin)
+                        return
+
+                    }
 
                 }
 

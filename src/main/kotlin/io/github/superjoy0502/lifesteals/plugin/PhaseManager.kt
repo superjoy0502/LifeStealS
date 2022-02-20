@@ -101,13 +101,16 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         // Shrinking WorldBorder
         if (phase == 3) {
 
+            // 인벤세이브 해제
+            for (world in plugin.server.worlds) world.setGameRule(GameRule.KEEP_INVENTORY, false)
+
             worldBorderScope = HeartbeatScope()
             worldBorderScope.launch {
 
                 val suspension = Suspension()
-                repeat(3000000) {
+                repeat(4200000) {
 
-                    plugin.centreLocation!!.world.worldBorder.size -= 0.0008
+                    plugin.centreLocation!!.world.worldBorder.size -= ((1500 - 100) / 4200000)
                     suspension.delay(1L)
 
                 }

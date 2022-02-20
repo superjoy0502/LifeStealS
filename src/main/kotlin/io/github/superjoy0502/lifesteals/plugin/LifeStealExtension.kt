@@ -13,7 +13,7 @@ fun Player.removeHeart(health: Double, plugin: LifeStealPlugin) {
 
     if (this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= health ||
         this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue!! <= 2
-            ) {
+        ) {
 
         this.gameMode = GameMode.SPECTATOR
         plugin.survivorList.remove(player)
@@ -24,6 +24,7 @@ fun Player.removeHeart(health: Double, plugin: LifeStealPlugin) {
             plugin.endGame(plugin.survivorList[0])
 
         }
+
         return
 
     } else {
