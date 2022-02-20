@@ -36,7 +36,7 @@ class PlayerDisconnectListener(private val plugin: LifeStealPlugin) : Listener {
                     if (plugin.server.onlinePlayers.contains(player)) {
 
                         playerDisconnectTimeMap.remove(player)
-                        return@repeat
+                        return@launch
 
                     }
                     counter++

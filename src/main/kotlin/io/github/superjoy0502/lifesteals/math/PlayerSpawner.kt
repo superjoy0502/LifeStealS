@@ -13,7 +13,7 @@ class PlayerSpawner(
 ) {
 
     var radius = 1100
-    private val ySpawn = 313.0
+    private val ySpawn = 330.0
 
     fun getPlayerSpawnLocation(index: Int): Location {
 

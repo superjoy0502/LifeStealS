@@ -122,9 +122,14 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
         event.respawnLocation = playerSpawner.getPlayerSpawnLocation((0 until plugin.survivorList.size).random())
 
-        player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
-        player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 1))
-        player.addPotionEffect(PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 1))
+        player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 60 * 20, 1))
+        if (plugin.phaseManager.phase == 17) {
+
+            player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
+            player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 1))
+            player.addPotionEffect(PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 1))
+
+        }
 
     }
 
