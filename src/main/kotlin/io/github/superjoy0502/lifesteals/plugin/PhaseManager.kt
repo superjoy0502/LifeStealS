@@ -53,6 +53,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
     var isTrackingClosestPlayer = false
     var playerTrackingMap: Map<Player, Player> = mapOf()
     var playersWithNoCompassList = arrayListOf<Player>()
+    var increaseLifeStealValueCount = 0
 
     fun phaseCoroutine() {
 
@@ -98,15 +99,15 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         }
 
         // Shrinking WorldBorder
-        if (phase == 7) {
+        if (phase == 3) {
 
             worldBorderScope = HeartbeatScope()
             worldBorderScope.launch {
 
                 val suspension = Suspension()
-                repeat(4950000) {
+                repeat(3000000) {
 
-                    plugin.centreLocation!!.world.worldBorder.size -= 0.002
+                    plugin.centreLocation!!.world.worldBorder.size -= 0.0008
                     suspension.delay(1L)
 
                 }
@@ -225,36 +226,17 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
             when {
 
-                decider <= 20 -> {
+                // 빼앗기는 하트 수 2개 영구적 증가 (최대 2회) - 40% (조건부 -40%)
+                decider <= 40 && increaseLifeStealValueCount < 2 -> {
 
-                    if (plugin.lifeStealValue <= 10) { // 빼앗기는 하트 수 1개 영구적 증가 (최대 5개까지) - 20%
+                    penaltyString = "이제부터 하트를 두개씩 더 빼앗깁니다"
 
-                        penaltyString = "이제부터 하트를 한개씩 더 빼앗깁니다"
-
-                        plugin.lifeStealValue += 2
-
-                    } else { // 빼앗기는 하트 수 5개 초과 시
-
-                        if ((0..1).random() == 0) { // 5분동안 밤 12시, 난이도 어려움 고정 - +10%
-
-                            penaltyString = "최악의 ${ChatColor.DARK_BLUE}밤${ChatColor.RESET}이 찾아옵니다"
-
-                            fixTime()
-                            fixDifficulty(Difficulty.HARD)
-
-                        } else { // 5분동안 날씨 번개 유지, 난이도 어려움 고정 - +10%
-
-                            penaltyString = "최악의 ${ChatColor.DARK_AQUA}폭풍${ChatColor.RESET}이 휘몰아칩니다"
-
-                            fixThunderStorm()
-                            fixDifficulty(Difficulty.HARD)
-
-                        }
-
-                    }
+                    plugin.lifeStealValue += 4
+                    increaseLifeStealValueCount++
 
                 }
-                decider in 21..40 -> { // 가장 가까운 플레이어에게 위치를 가르키는 나침반 지급 - 20%
+                // 가장 가까운 플레이어에게 위치를 가르키는 나침반 지급 - 15% (조건부 +10%)
+                (decider in 41..55 && increaseLifeStealValueCount < 2) || decider in 1..25 -> {
                     
                     penaltyString = "가장 가까운 사람을 향한 ${ChatColor.DARK_GRAY}길잡이${ChatColor.RESET}를 부여받습니다"
 
@@ -285,7 +267,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                         }
 
                         // Turn on player tracker
-                        playerTrackingMap += Pair(player, closestPlayer)
+                        playerTrackingMap = playerTrackingMap + Pair(player, closestPlayer)
 
                     }
 
@@ -304,7 +286,8 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                     }
 
                 }
-                decider in 41..50 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소 - 10%
+                // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소 - 15% (조건부 +10%)
+                (decider in 56..70 && increaseLifeStealValueCount < 2) || decider in 26..50 -> {
                     
                     penaltyString = "${ChatColor.RED}하트${ChatColor.RESET} 한개를 잃습니다"
 
@@ -315,28 +298,19 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                     }
 
                 }
-                decider in 51..70 -> { // 모든 플레이어에게 발광 효과 부여 - 20%
+                // 5분동안 날씨 번개 유지, 밤 12시, 난이도 어려움, 발광 효과 고정 - 15% (조건부 +10%)
+                (decider in 71..85 && increaseLifeStealValueCount < 2) || decider in 51..75 -> {
 
+                    penaltyString = "최악의 ${ChatColor.DARK_AQUA}시간${ChatColor.RESET}이 찾아옵니다"
+
+                    fixThunderStorm()
+                    fixTime()
+                    fixDifficulty(Difficulty.HARD)
                     applyPotionEffectToPlayers(PotionEffect(PotionEffectType.GLOWING, phaseLength * 20, 1))
 
                 }
-                decider in 71..80 -> { // 5분동안 밤 12시, 난이도 어려움 고정 - 10% (조건부 +10%)
-
-                    penaltyString = "최악의 ${ChatColor.DARK_BLUE}밤${ChatColor.RESET}이 찾아옵니다"
-
-                    fixTime()
-                    fixDifficulty(Difficulty.HARD)
-
-                }
-                decider in 81..90 -> { // 5분동안 날씨 번개 유지, 난이도 어려움 - 10% (조건부 +10%)
-
-                    penaltyString = "최악의 ${ChatColor.DARK_AQUA}폭풍${ChatColor.RESET}이 휘몰아칩니다"
-
-                    fixThunderStorm()
-                    fixDifficulty(Difficulty.HARD)
-
-                }
-                else -> { // 디버프 - 10%
+                // 디버프 - 15% (조건부 +10%)
+                else -> {
 
                     penaltyString = "${ChatColor.DARK_RED}저주${ChatColor.RESET}에 걸립나다"
 

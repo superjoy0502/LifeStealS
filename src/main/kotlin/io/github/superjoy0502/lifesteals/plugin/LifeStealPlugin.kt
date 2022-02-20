@@ -23,7 +23,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    val pluginVersion = "1.3.0b"
+    val pluginVersion = "1.4.0b"
     private val commandDispatcher = CommandDispatcher(this)
     val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private val playerListener = PlayerListener(this)
@@ -81,10 +81,10 @@ class LifeStealPlugin : JavaPlugin() {
         )
         bossBar?.isVisible = true
         println(bossBar!!.isVisible)
-        val playerSpawner = PlayerSpawner(participantList.size, centreLocation!!)
-        for (i in 0 until participantList.size) {
+        val playerSpawner = PlayerSpawner(survivorList.size, centreLocation!!)
+        for (i in 0 until survivorList.size) {
 
-            val player = participantList[i]
+            val player = survivorList[i]
             bossBar?.addPlayer(player)
             player.teleport(playerSpawner.getPlayerSpawnLocation(i))
             player.gameMode = GameMode.SURVIVAL
@@ -119,13 +119,14 @@ class LifeStealPlugin : JavaPlugin() {
         participantList = arrayListOf()
         disconnectListener.playerDisconnectTimeMap = mutableMapOf<Player, Int>()
         phaseManager = PhaseManager(this)
+        phaseManager.increaseLifeStealValueCount = 0
         started = false
         initialized = false
         participantList = ArrayList()
         survivorList = ArrayList()
         lifeStealValue = 2
         if (bossBar != null) bossBar!!.isVisible = false
-        centreLocation?.world?.worldBorder?.size = 10000.0
+        centreLocation?.world?.worldBorder?.size = 2500.0
         centreLocation?.world?.worldBorder?.center = centreLocation!!
 
     }
@@ -136,7 +137,7 @@ class LifeStealPlugin : JavaPlugin() {
 
             player.showTitle(
                 Title.title(
-                    Component.text("${ChatColor.GREEN}${winner.name}님 우승!"),
+                    Component.text(ChatColor.GREEN.toString() + winner.name + "님 우승!"),
                     Component.text(
                         "${ChatColor.RED}Max HP: ${winner.getAttribute(Attribute.GENERIC_MAX_HEALTH)}"
                     )
