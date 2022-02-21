@@ -142,6 +142,8 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
             suspension.delay(50L)
 
             player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 60 * 20, 1))
+            player.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 10 * 20, Integer.MAX_VALUE))
+            player.addPotionEffect(PotionEffect(PotionEffectType.SATURATION, 10 * 20, Integer.MAX_VALUE))
             if (plugin.phaseManager.phase == 17) {
 
                 player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
