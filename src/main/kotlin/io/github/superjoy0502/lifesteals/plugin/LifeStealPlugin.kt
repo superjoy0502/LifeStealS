@@ -23,7 +23,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    val pluginVersion = "1.4.4b"
+    val pluginVersion = "1.5.0b"
     private val commandDispatcher = CommandDispatcher(this)
     val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private val playerListener = PlayerListener(this)
@@ -138,9 +138,9 @@ class LifeStealPlugin : JavaPlugin() {
 
             player.showTitle(
                 Title.title(
-                    Component.text(ChatColor.GREEN.toString() + winner.name + "님 우승!"),
+                    Component.text("${ChatColor.GREEN}${winner.name}님 우승!"),
                     Component.text(
-                        ChatColor.RED.toString() + "Max HP: " + winner.getAttribute(Attribute.GENERIC_MAX_HEALTH).toString()
+                        "${ChatColor.RED}Max HP: ${winner.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue.toString()}"
                     )
                 )
             )
