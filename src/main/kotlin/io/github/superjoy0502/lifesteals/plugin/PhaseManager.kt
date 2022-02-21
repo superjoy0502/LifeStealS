@@ -78,18 +78,14 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
             plugin.bossBar?.setTitle("PHASE 17: ENDGAME")
             plugin.bossBar?.progress = 1.0
             plugin.lifeStealValue = 10
-            for (world in plugin.server.worlds) {
+            plugin.world?.difficulty = Difficulty.HARD
+            plugin.nether?.difficulty = Difficulty.HARD
+            plugin.end?.difficulty = Difficulty.HARD
 
-                world.difficulty = Difficulty.HARD
+            plugin.world?.setStorm(true)
+            plugin.world?.isThundering = true
+            plugin.world?.setGameRule(GameRule.DO_WEATHER_CYCLE, false)
 
-            }
-            for (world in plugin.server.worlds) {
-
-                world.setStorm(true)
-                world.isThundering = true
-                world.setGameRule(GameRule.DO_WEATHER_CYCLE, false)
-
-            }
             applyPotionEffectToPlayers(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
             applyPotionEffectToPlayers(PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 1))
             applyPotionEffectToPlayers(PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 1))
@@ -102,7 +98,9 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         if (phase == 3) {
 
             // 인벤세이브 해제
-            for (world in plugin.server.worlds) world.setGameRule(GameRule.KEEP_INVENTORY, false)
+            plugin.world?.setGameRule(GameRule.KEEP_INVENTORY, false)
+            plugin.nether?.setGameRule(GameRule.KEEP_INVENTORY, false)
+            plugin.end?.setGameRule(GameRule.KEEP_INVENTORY, false)
 
             worldBorderScope = HeartbeatScope()
             worldBorderScope.launch {
@@ -111,7 +109,8 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                 repeat(6000000) {
 
 //                    plugin.centreLocation!!.world.worldBorder.size -= ((2500 - 100) / 6000000)
-                    plugin.centreLocation!!.world.worldBorder.size = plugin.centreLocation!!.world.worldBorder.size - 0.0004
+                    plugin.world!!.worldBorder.size = plugin.world!!.worldBorder.size - 0.0004
+                    if (plugin.nether != null) plugin.nether!!.worldBorder.size = plugin.nether!!.worldBorder.size - 0.0004
                     suspension.delay(1L)
 
                 }
@@ -350,27 +349,24 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
     }
 
     fun fixThunderStorm() {
+
         fixWeatherScope = HeartbeatScope()
         fixWeatherScope.launch {
 
             val suspension = Suspension()
-            for (world in plugin.server.worlds) {
 
-                world.setStorm(true)
-                world.isThundering = true
-                world.setGameRule(GameRule.DO_WEATHER_CYCLE, false)
+            plugin.world?.setStorm(true)
+            plugin.world?.isThundering = true
+            plugin.world?.setGameRule(GameRule.DO_WEATHER_CYCLE, false)
 
-            }
             suspension.delay(phaseLength * 1000L)
-            for (world in plugin.server.worlds) {
 
-                world.setStorm(false)
-                world.isThundering = false
-                world.setGameRule(GameRule.DO_WEATHER_CYCLE, true)
-
-            }
+            plugin.world?.setStorm(false)
+            plugin.world?.isThundering = false
+            plugin.world?.setGameRule(GameRule.DO_WEATHER_CYCLE, true)
 
         }
+
     }
 
     fun fixTime() {
@@ -379,18 +375,14 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         fixTimeScope.launch {
 
             val suspension = Suspension()
-            for (world in plugin.server.worlds) {
 
-                world.time = 18000L
-                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false)
+            plugin.world?.time = 18000L
+            plugin.world?.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false)
 
-            }
             suspension.delay(phaseLength * 1000L)
-            for (world in plugin.server.worlds) {
 
-                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true)
+            plugin.world?.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true)
 
-            }
 
         }
 
@@ -402,17 +394,16 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         fixDifficultyScope.launch {
 
             val suspension = Suspension()
-            for (world in plugin.server.worlds) {
 
-                world.difficulty = difficulty
+            plugin.world?.difficulty = difficulty
+            plugin.nether?.difficulty = difficulty
+            plugin.end?.difficulty = difficulty
 
-            }
             suspension.delay(phaseLength * 1000L)
-            for (world in plugin.server.worlds) {
 
-                world.difficulty = Difficulty.EASY
-
-            }
+            plugin.world?.difficulty = Difficulty.EASY
+            plugin.nether?.difficulty = Difficulty.EASY
+            plugin.end?.difficulty = Difficulty.EASY
 
         }
 

@@ -23,7 +23,7 @@ import org.bukkit.potion.PotionEffectType
 
 class LifeStealPlugin : JavaPlugin() {
 
-    val pluginVersion = "1.5.0b"
+    val pluginVersion = "1.5.1b"
     private val commandDispatcher = CommandDispatcher(this)
     val lifesteal = "${ChatColor.RED}LifeSteal${ChatColor.GOLD}S${ChatColor.RESET}"
     private val playerListener = PlayerListener(this)
@@ -37,6 +37,10 @@ class LifeStealPlugin : JavaPlugin() {
     var centreLocation: Location? = null
     var lifeStealValue = 2
     var bossBar: BossBar? = null
+
+    var world: World? = null
+    var nether: World? = null
+    var end: World? = null
 
     override fun onEnable() {
 
@@ -63,12 +67,13 @@ class LifeStealPlugin : JavaPlugin() {
 
     fun start() {
 
+        world = centreLocation?.world!!
+        nether = server.getWorld(world!!.name + "_nether")
+        end = server.getWorld(world!!.name + "_the_end")
 
-        for (world in server.worlds) {
-
-            world.difficulty = Difficulty.EASY
-
-        }
+        world!!.difficulty = Difficulty.EASY
+        nether?.difficulty = Difficulty.EASY
+        end?.difficulty = Difficulty.EASY
 
         reset()
 
@@ -100,7 +105,9 @@ class LifeStealPlugin : JavaPlugin() {
             if (centreLocation != null) player.world.spawnLocation = centreLocation!!
 
         }
-        for (world in server.worlds) world.setGameRule(GameRule.KEEP_INVENTORY, true)
+        world!!.setGameRule(GameRule.KEEP_INVENTORY, true)
+        nether?.setGameRule(GameRule.KEEP_INVENTORY, true)
+        end?.setGameRule(GameRule.KEEP_INVENTORY, true)
         started = true
 
         phaseManager.phaseCoroutine()
@@ -127,8 +134,12 @@ class LifeStealPlugin : JavaPlugin() {
         survivorList = ArrayList()
         lifeStealValue = 2
         if (bossBar != null) bossBar!!.isVisible = false
-        centreLocation?.world?.worldBorder?.size = 2500.0
-        centreLocation?.world?.worldBorder?.center = centreLocation!!
+        val world = centreLocation?.world
+        val nether = server.getWorld(world?.name + "_nether")
+        world?.worldBorder?.size = 2500.0
+        world?.worldBorder?.center = centreLocation!!
+        nether?.worldBorder?.size = 2500.0
+        nether?.worldBorder?.center = centreLocation!!
 
     }
 
