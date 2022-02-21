@@ -138,12 +138,11 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
         givePlayerEffectScope.launch {
 
+            val suspension = Suspension()
+            suspension.delay(50L)
+
             player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 60 * 20, 1))
             if (plugin.phaseManager.phase == 17) {
-
-                val suspension = Suspension()
-
-                suspension.delay(50L)
 
                 player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
                 player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 1))
