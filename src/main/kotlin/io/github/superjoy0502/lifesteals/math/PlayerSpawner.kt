@@ -12,7 +12,7 @@ class PlayerSpawner(
     private val thetaZero: Int = Random.nextInt(0, 360)
 ) {
 
-    var radius = 1500
+    var radius = 1000
     private val ySpawn = 330.0
 
     fun getPlayerSpawnLocation(index: Int): Location {

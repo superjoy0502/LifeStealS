@@ -1,8 +1,11 @@
 package io.github.superjoy0502.lifesteals.listener
 
+import io.github.monun.heartbeat.coroutines.HeartbeatScope
+import io.github.monun.heartbeat.coroutines.Suspension
 import io.github.superjoy0502.lifesteals.math.PlayerSpawner
 import io.github.superjoy0502.lifesteals.plugin.LifeStealPlugin
 import io.github.superjoy0502.lifesteals.plugin.removeHeart
+import kotlinx.coroutines.launch
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
@@ -131,12 +134,22 @@ class PlayerListener(private val plugin: LifeStealPlugin) : Listener {
 
         event.respawnLocation = playerSpawner.getPlayerSpawnLocation((0 until plugin.survivorList.size).random())
 
-        player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 60 * 20, 1))
-        if (plugin.phaseManager.phase == 17) {
+        val givePlayerEffectScope = HeartbeatScope()
 
-            player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
-            player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 1))
-            player.addPotionEffect(PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 1))
+        givePlayerEffectScope.launch {
+
+            player.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 60 * 20, 1))
+            if (plugin.phaseManager.phase == 17) {
+
+                val suspension = Suspension()
+
+                suspension.delay(50L)
+
+                player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1))
+                player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, Integer.MAX_VALUE, 1))
+                player.addPotionEffect(PotionEffect(PotionEffectType.BAD_OMEN, Integer.MAX_VALUE, 1))
+
+            }
 
         }
 

@@ -108,9 +108,9 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
             worldBorderScope.launch {
 
                 val suspension = Suspension()
-                repeat(4200000) {
+                repeat(6000000) {
 
-                    plugin.centreLocation!!.world.worldBorder.size -= ((1500 - 100) / 4200000)
+                    plugin.centreLocation!!.world.worldBorder.size -= ((2500 - 100) / 6000000)
                     suspension.delay(1L)
 
                 }
