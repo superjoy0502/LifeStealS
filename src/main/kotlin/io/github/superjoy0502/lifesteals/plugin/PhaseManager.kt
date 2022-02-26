@@ -170,7 +170,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
         if (phase == 1 || phase == 2) penaltyString = "평화 그 자체" // phase 1, 2 (Phase Time = 5 min)
         else if (phase in 3..6) { // phase 3 ~ 6 (Phase Time = 5 min)
 
-            when ((0..4).random()) {
+            when ((0..3).random()) {
 
                 0 -> { // 빼앗기는 하트 수 1개 증가
 
@@ -180,7 +180,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
                 }
 
-                1 -> { // 5분 동안 모든 플레이어 발광 효과 부여
+/*                1 -> { // 5분 동안 모든 플레이어 발광 효과 부여
                     
                     penaltyString = "5분 동안 모든 플레이어에게 ${ChatColor.YELLOW}발광${ChatColor.RESET} 효과가 부여됩니다"
 
@@ -190,9 +190,9 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
                     }
 
-                }
+                }*/
 
-                2 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소
+                1 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소
 
                     penaltyString = "${ChatColor.RED}하트${ChatColor.RESET} 1개가 영구적으로 감소합니다"
 
@@ -204,7 +204,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
                 }
 
-                3 -> { // 5분동안 밤 12시, 난이도 보통 유지
+                2 -> { // 5분동안 밤 12시, 난이도 보통 유지
 
                     penaltyString = "5분 동안 ${ChatColor.DARK_BLUE}나쁜 밤${ChatColor.RESET}이 찾아옵니다"
 
@@ -213,7 +213,7 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
 
                 }
 
-                4 -> { // 5분동안 날씨 번개 유지
+                3 -> { // 5분동안 날씨 번개 유지
 
                     penaltyString = "5분 동안 ${ChatColor.DARK_AQUA}폭풍${ChatColor.RESET}이 휘몰아칩니다"
 
