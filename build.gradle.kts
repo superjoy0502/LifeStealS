@@ -19,13 +19,13 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
 
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
 
     implementation("io.github.monun:heartbeat-coroutines:0.0.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-    testImplementation("org.mockito:mockito-core:4.1.0")
+    testImplementation("org.mockito:mockito-core:4.6.1")
 }
 
 project.extra.set("packageName", name.replace("-", ""))

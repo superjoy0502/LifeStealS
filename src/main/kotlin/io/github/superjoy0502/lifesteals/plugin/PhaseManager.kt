@@ -108,7 +108,6 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                 val suspension = Suspension()
                 repeat(6000000) {
 
-//                    plugin.centreLocation!!.world.worldBorder.size -= ((2500 - 100) / 6000000)
                     plugin.world!!.worldBorder.size = plugin.world!!.worldBorder.size - 0.0004
                     if (plugin.nether != null) plugin.nether!!.worldBorder.size = plugin.nether!!.worldBorder.size - 0.0004
                     suspension.delay(1L)
@@ -179,18 +178,6 @@ class PhaseManager(private val plugin: LifeStealPlugin) {
                     plugin.lifeStealValue += 2
 
                 }
-
-/*                1 -> { // 5분 동안 모든 플레이어 발광 효과 부여
-                    
-                    penaltyString = "5분 동안 모든 플레이어에게 ${ChatColor.YELLOW}발광${ChatColor.RESET} 효과가 부여됩니다"
-
-                    for (player in plugin.survivorList) {
-
-                        player.addPotionEffect(PotionEffect(PotionEffectType.GLOWING, phaseLength * 20, 1))
-
-                    }
-
-                }*/
 
                 1 -> { // 모든 플레이어의 최대 체력이 영구적으로 하트 1개만큼 감소
 
